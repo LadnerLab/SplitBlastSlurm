@@ -323,9 +323,7 @@ def get_file_names( search_directory ):
 
 def combine_outputs(blast_type, task, subject, reg_files, color_files, nohit_files, opts):
     #Will be for combining subset files
-    #Normal parsed output file
     out_parse = open('%s_%s_%s_%s_parsed.txt' % (opts.query, blast_type, task[:2], subject.split('/')[-1]), 'w+')    
-   # out_parse.write("Query Name\tQuery Length\tSubject Name\tSubject Length\tAlignment Length\tQuery Start\tQuery End\tSubject Start\tSubject End\tHsp Score\tHsp Expect\tHsp Identities\tPercent Match\tNumber_of_gaps\n")
     for f in reg_files:
         fin=open(f, 'r')
         for line in fin:
