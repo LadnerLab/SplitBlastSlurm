@@ -1,4 +1,3 @@
-#!/usr/bin/env python2
 
 # By Jason Ladner
 #Example command: 'sub_blast_parse.py --reg_out name --color_out name --no_hits name --numHits # --numHsps # --goodHit #.# --xml file'

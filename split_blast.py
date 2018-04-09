@@ -1,5 +1,3 @@
-#!/usr/bin/env python2
-
 import sys, optparse, os, math, random 
 import subprocess
 from subprocess import Popen, PIPE
@@ -43,7 +41,7 @@ class BlastInfo:
         self.color_out = '%s_parsed_colored.txt' % ( prefix )
 
     def set_parse_command( self ):
-        self.parse_cmd = ( "%s --reg_out %s --no_hits %s " 
+        self.parse_cmd = ( "python %s --reg_out %s --no_hits %s " 
                           "--numHits %d --numHsps %d --goodHit %s --xml %s"
                             % ( self.parse_file, self.reg_out, self.no_hits, self._options.numHits, \
                                 self._options.numHsps, self._options.goodHit, self._this_out )
@@ -323,7 +321,9 @@ def get_file_names( search_directory ):
 
 def combine_outputs(blast_type, task, subject, reg_files, color_files, nohit_files, opts):
     #Will be for combining subset files
+    #Normal parsed output file
     out_parse = open('%s_%s_%s_%s_parsed.txt' % (opts.query, blast_type, task[:2], subject.split('/')[-1]), 'w+')    
+   # out_parse.write("Query Name\tQuery Length\tSubject Name\tSubject Length\tAlignment Length\tQuery Start\tQuery End\tSubject Start\tSubject End\tHsp Score\tHsp Expect\tHsp Identities\tPercent Match\tNumber_of_gaps\n")
     for f in reg_files:
         fin=open(f, 'r')
         for line in fin:

@@ -1,5 +1,3 @@
-#!/usr/bin/env python2
-
 import os, optparse
 import shutil
 import math

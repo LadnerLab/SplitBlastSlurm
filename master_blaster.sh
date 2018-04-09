@@ -14,6 +14,7 @@ SPLIT_SCRIPT=split_fastas.py
 DEFAULT_TEMP=temp
 KEEPOUT=0
 combine_file="combine_outputs.sh"
+working_dir="$PWD"
 
 POSITIONAL=()
 args=()
@@ -23,7 +24,6 @@ while [[ $# -gt 0 ]]
 do
 key="$1"
 if ! [[ key = "" ]]; then
-    echo adding a key to the array
     args+=("$1")
     args+=("$2")
 fi
@@ -157,20 +157,21 @@ fi
 # Read all of the command-line arguments into a variable
 # Split the query file into multiple temporary files for blasting
 if [ "$QUERY" ]; then
-    srun $SPLIT_SCRIPT -q $QUERY -t "$TEMP" --numProcs $NUMPROCS
+    srun $SPLIT_SCRIPT -q $QUERY -t "$workign_dir$TEMP" --numProcs $NUMPROCS
 else
     srun echo "Fasta query file must be provided for script to execute."
     exit 1
 fi
 
 # Get the number of files created by split_fastas
-num_files= ls $TEMP | wc -l
+num_files= ls "$working_dir/$TEMP" | wc -l
 output=0
 
 # Call split_blast on the rest of the files in the directory 
 # with the args passed in 
 jobnumber=""
-for file in "$TEMP"/*
+shopt -s nullglob
+for file in "$working_dir$TEMP"/*
 do
     # Create a file to run the blast, save its jobnumber 
     echo '#!/bin/sh' >> "$file.sh"
@@ -183,9 +184,9 @@ do
 
     # We don't want to recreate the database for each blast, so only do it on the first
     if [[ $jobnumber = "" ]] ; then
-        echo srun $BLASTSCRIPT -q $file ${args[@]:2} >> "$file.sh"
+        echo srun python $BLASTSCRIPT -q $file ${args[@]:2} >> "$file.sh"
     else
-        echo srun $BLASTSCRIPT -q $file ${args[@]:2} --dontIndex >> "$file.sh"
+        echo srun python $BLASTSCRIPT -q $file ${args[@]:2} --dontIndex >> "$file.sh"
     fi
 
     output=$( sbatch $file.sh )
