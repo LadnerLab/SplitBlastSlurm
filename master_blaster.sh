@@ -171,11 +171,12 @@ output=0
 # with the args passed in 
 jobnumber=""
 shopt -s nullglob
-for file in "$working_dir$TEMP"/*
+for file in "$TEMP"/*
 do
+    echo TEMP: "$TEMP/$file.sh"
     # Create a file to run the blast, save its jobnumber 
     echo '#!/bin/sh' >> "$file.sh"
-    echo '#SBATCH --time=5:00' >> $file.sh
+    echo '#SBATCH --time=5:00' >> "$file.sh"
     echo '#SBATCH --output=pyoutput' >> $file.sh
 
     echo module load python >> "$file.sh"
@@ -184,19 +185,21 @@ do
 
     # We don't want to recreate the database for each blast, so only do it on the first
     if [[ $jobnumber = "" ]] ; then
-        echo srun python $BLASTSCRIPT -q $file ${args[@]:2} >> "$file.sh"
+        echo $BLASTSCRIPT -q $file ${args[@]:2} >> "$file.sh"
     else
-        echo srun python $BLASTSCRIPT -q $file ${args[@]:2} --dontIndex >> "$file.sh"
+        echo $BLASTSCRIPT -q $file ${args[@]:2} --dontIndex >> "$file.sh"
     fi
 
-    output=$( sbatch $file.sh )
+    output=$( sbatch "$file.sh" )
     echo $output
     jobnumber+="$( echo $output | cut -d ' ' -f 4 )":
 done
 
 
 # Combine files after the last blast has been completed
-jobnumber="${jobnumber:0:${#jobnumber}-1}"
+echo Output: $output
+echo JobNumber: $jobnumber
+jobnumber="${jobnumber:0:${#jobnumber} -1}"
 sbatch --dependency=afterok:$jobnumber $combine_file -t $TEMP $KEEPOUT 
 
 
