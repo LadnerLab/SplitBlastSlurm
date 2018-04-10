@@ -1,5 +1,4 @@
 #!/usr/bin/env python2
-
 import sys, optparse, os, math, random 
 import subprocess
 from subprocess import Popen, PIPE
@@ -21,20 +20,20 @@ class BlastInfo:
         # reg output for program output
         self.reg_out = '%s_parsed.txt' % ( prefix )
 
-        self._options = options
+        self.options = options
 
-        self._this_out = this_out
+        self.this_out = this_out
 
         self.no_hits = '%s_nohits.txt' % ( prefix ) 
 
         # Command to be used for blasting
-        self._blast_cmd = cmd
+        self.blast_cmd = cmd
 
         self.set_parse_command()
         print( self.parse_cmd )
         if options.withColor:
             self.set_color()
-            self._parse_cmd += "--color_out %s " % ( self.color_out )
+            self.parse_cmd += "--color_out %s " % ( self.color_out )
         
         
     def set_color( self ):
@@ -44,9 +43,9 @@ class BlastInfo:
 
     def set_parse_command( self ):
         self.parse_cmd = ( "%s --reg_out %s --no_hits %s " 
-                          "--numHits %d --numHsps %d --goodHit %s --xml %s"
-                            % ( self.parse_file, self.reg_out, self.no_hits, self._options.numHits, \
-                                self._options.numHsps, self._options.goodHit, self._this_out )
+                          "--numHits %d --numHsps %d --goodHit %s --xml '%s'"
+                            % ( self.parse_file, self.reg_out, self.no_hits, self.options.numHits, \
+                                self.options.numHsps, self.options.goodHit, self.this_out )
                                 
                           )
 
@@ -64,12 +63,15 @@ def main():
     add_options( option_parser, option_defaults )
     options, arguments = option_parser.parse_args() 
 
+    options.numHsps = int( options.numHsps )
 
     # Adjust defaults if output type is not xml
     if options.outFmt != 5:
         options.keepOut = True
         options.dontParse = True
 
+    # if multiple_queries( options.query ):
+        # options.query = combine_queries( options.query )
 
     # Change filenames to their absolute path versions      
     options.query = set_path_to_absolute( options.query )
@@ -190,12 +192,13 @@ def split_blast( blast_type, task, options ):
         nohit_files.append( work_info.no_hits )
 
         # Run the blast
-        blast = subprocess.Popen( command, shell=True ) 
+	blast = subprocess.Popen( command, shell=True )
 	blast.wait()
-        # Run the parse command 
         os.chdir( "../" )
-        blast = subprocess.Popen( work_info.parse_cmd, shell=True )
-	blast.wait()
+
+        # Run the parse command 
+        parse = subprocess.Popen( work_info.parse_cmd, shell=True )
+	parse.wait()
 
         no_good_hits = combine_outputs( blast_type, task, subject, regular_files, color_files, \
                                         nohit_files, options )
@@ -224,36 +227,36 @@ def format_as_database( options, db_type ):
         os.chdir( options.temp )
 
 def split_fasta( options ):
-     created_files = []
-     names, sequences = read_fasta_lists( options.query )
-     sequence_count = len( names )
+    created_files = []
+    names, sequences = read_fasta_lists( options.query )
+    sequence_count = len( names )
 
-     if sequence_count >= options.numProcs:
-         sub_size = int( math.ceil( sequence_count / options.numProcs ) ) 
-     elif sequence_count > 0:
-         options.numProcs = sequence_count
-         sub_size = 1
-     else:
-         return created_files
+    if sequence_count >= options.numProcs:
+        sub_size = int( math.ceil( sequence_count / options.numProcs ) ) 
+    elif sequence_count > 0:
+        options.numProcs = sequence_count
+        sub_size = 1
+    else:
+        return created_files
 
-     for start in range( 0, sequence_count, sub_size ):
-         end = start + sub_size 
+    for start in range( 0, sequence_count, sub_size ):
+        end = start + sub_size 
 
-         sub_names = names[ start : end ]
-         sub_seqs = sequences[ start: end ]
+        sub_names = names[ start : end ]
+        sub_seqs = sequences[ start: end ]
 
-         new_filename = '%d_%d.fasta' % ( start + 1, end )
-         created_files.append( new_filename )
-         write_fasta( sub_names, sub_seqs, new_filename )
-     return created_files
+        new_filename = '%d_%d.fasta' % ( start + 1, end )
+        created_files.append( new_filename )
+        write_fasta( sub_names, sub_seqs, new_filename )
+    return created_files
 
 def write_fasta( names, sequences, new_filename):
-     ''' Writes a given number of names and sequences into a fasta
-         file'''
-     file_out = open ( new_filename, 'w' )
-     for index in range( len( names ) ):
-         file_out.write( ">%s\n%s\n" % ( names[ index ], sequences[ index ] ) )
-     file_out.close()
+    ''' Writes a given number of names and sequences into a fasta
+        file'''
+    file_out = open ( new_filename, 'w' )
+    for index in range( len( names ) ):
+        file_out.write( ">%s\n%s\n" % ( names[ index ], sequences[ index ] ) )
+    file_out.close()
     
         
 def read_files_list( files_to_read ):
@@ -321,7 +324,9 @@ def get_file_names( search_directory ):
 
 def combine_outputs(blast_type, task, subject, reg_files, color_files, nohit_files, opts):
     #Will be for combining subset files
+    #Normal parsed output file
     out_parse = open('%s_%s_%s_%s_parsed.txt' % (opts.query, blast_type, task[:2], subject.split('/')[-1]), 'w+')    
+   # out_parse.write("Query Name\tQuery Length\tSubject Name\tSubject Length\tAlignment Length\tQuery Start\tQuery End\tSubject Start\tSubject End\tHsp Score\tHsp Expect\tHsp Identities\tPercent Match\tNumber_of_gaps\n")
     for f in reg_files:
         fin=open(f, 'r')
         for line in fin:
@@ -445,7 +450,7 @@ def add_options( parser_object , default_values ):
                                      )
                             )
 
-    parser_object.add_option( '--numHsps', type = 'int', default = default_values[ 'numHsps' ], \
+    parser_object.add_option( '--numHsps', default = default_values[ 'numHsps' ], \
                               help = ( "Integer specifying the number of "
                                        "alignments to report per query/subject "
                                        "pair. [%s]" % ( default_values[ 'numHsps' ] )
