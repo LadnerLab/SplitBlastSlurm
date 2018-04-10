@@ -70,8 +70,6 @@ def main():
         options.keepOut = True
         options.dontParse = True
 
-    # if multiple_queries( options.query ):
-        # options.query = combine_queries( options.query )
 
     # Change filenames to their absolute path versions      
     options.query = set_path_to_absolute( options.query )
