@@ -5,7 +5,8 @@ Scripts to multiplex BLAST jobs on a server managed by slurm
 
 Usage: split_blast.py [options]
 
-Options:
+### Options:
+```
   -h, --help            show this help message and exit
   -q QUERY, --query=QUERY
                         Fasta query file. Can be a comma specified list of
@@ -49,3 +50,4 @@ Options:
   --orfSize=ORFSIZE     Integer specifying the minimum size for an open
                         reading frame to be considered significant [100]
   --cleanUp=CLEANUP     
+```
