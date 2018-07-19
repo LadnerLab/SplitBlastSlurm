@@ -1,6 +1,6 @@
 #!/bin/bash
 #SBATCH --job-name=split_blast
-#SBATCH --time=5:00
+#SBATCH --time=1:00:00
 #SBATCH --workdir=.
 
 module load python
@@ -16,6 +16,7 @@ KEEPOUT=0
 combine_file="combine_outputs.sh"
 working_dir="$PWD"
 time="5:00"
+mem="1G"
 
 sub_args=()
 POSITIONAL=()
@@ -171,6 +172,12 @@ case $key in
     shift
     ;;
 
+    --mem)
+    mem="$2"
+    shift
+    shift
+    ;;
+
     *)
     POSITIONAL+=("$1")
     shift
@@ -210,7 +217,7 @@ do
     # Create a file to run the blast, save its jobnumber 
     echo '#!/bin/sh' >> "$file.sh"
     echo '#SBATCH --time='$time >> "$file.sh"
-    echo '#SBATCH --mem=5G' >> "$file.sh"
+    echo '#SBATCH --mem='$mem >> "$file.sh"
     echo '#SBATCH --output=pyoutput' >> $file.sh
 
     echo module load python >> "$file.sh"
@@ -227,12 +234,12 @@ do
 
     output=$( sbatch "$file.sh" )
     echo $output
-    jobnumber+="$( echo $output | cut -d ' ' -f 4 )",
+    jobnumber+="$( echo $output | cut -d ' ' -f 4 )":
 done
 
 
 # Combine files after the last blast has been completed
-jobnumber="${jobnumber[@]}"
+jobnumber="${jobnumber:0:${#jobnumber} -1}"
 echo --dependency=afterok:$jobnumber $combine_file -t $TEMP $KEEPOUT 
 sbatch --dependency=afterok:$jobnumber $combine_file -t $TEMP $KEEPOUT 
 
