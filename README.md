@@ -11,6 +11,9 @@ Usage: split_blast.py [options]
   -q QUERY, --query=QUERY
                         Fasta query file. Can be a comma specified list of
                         fastas also. [None, Required]
+  --time 
+                        Time to be allotted for each blast job to run. Format
+                        is that specified by slurm. [5:00]
   --ns=NS, --nucSubject=NS
                         Fasta file of nucleotide sequences to  compare the
                         query sequences to. Will format if necessary. [None]
