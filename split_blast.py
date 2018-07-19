@@ -470,7 +470,6 @@ def add_options( parser_object , default_values ):
                                        "[%s]" % ( default_values[ 'orfSize' ] ) 
                                      )
                             )
-    parser_object.add_option( '--cleanUp', default = "" )
 
 if __name__ == '__main__':
     main()

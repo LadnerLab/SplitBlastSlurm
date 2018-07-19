@@ -55,5 +55,4 @@ Usage: split_blast.py [options]
                         for  a hit to be significant. [0.05]
   --orfSize=ORFSIZE     Integer specifying the minimum size for an open
                         reading frame to be considered significant [100]
-  --cleanUp=CLEANUP     
 ```
