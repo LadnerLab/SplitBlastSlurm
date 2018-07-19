@@ -5,8 +5,6 @@
 
 temp_dir=$2
 # Header Added to files produced
-$header='Query Name\tQuery Length\tSubject Name\tSubject Length\tAlignment Length\tQuery StartQuery End\tSubject Start\tSubject End\tHsp Score\tHsp Expect\tHsp Identities\tPercent Match\tNumber of Gaps\n'
-
 echo -e "Query Name\tQuery Length\tSubject Name\tSubject Length\tAlignment Length\tQuery StartQuery End\tSubject Start\tSubject End\tHsp Score\tHsp Expect\tHsp Identities\tPercent Match\tNumber of Gaps\n" >> out.txt
 
 for file in $( ls "$temp_dir" ); do 
