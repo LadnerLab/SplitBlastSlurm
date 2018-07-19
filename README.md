@@ -14,6 +14,9 @@ Usage: split_blast.py [options]
   --time 
                         Time to be allotted for each blast job to run. Format
                         is that specified by slurm. [5:00]
+  --mem
+  	 					Memory to be allotted for each blast job to run.
+						[4G]
   --ns=NS, --nucSubject=NS
                         Fasta file of nucleotide sequences to  compare the
                         query sequences to. Will format if necessary. [None]
