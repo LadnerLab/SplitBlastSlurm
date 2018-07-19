@@ -152,6 +152,7 @@ def split_blast( blast_type, task, options ):
     # Remove the temp/ from our query file's path
     sub_file = options.query
 
+
     if sub_file:
         # Check to see if subject fasta is formatted as a blast database.
         # If not, format it.
@@ -192,13 +193,11 @@ def split_blast( blast_type, task, options ):
         nohit_files.append( work_info.no_hits )
 
         # Run the blast
-	blast = subprocess.Popen( command, shell=True )
-	blast.wait()
+	blast = subprocess.check_call( command, shell=True )
         os.chdir( "../" )
 
         # Run the parse command 
-        parse = subprocess.Popen( work_info.parse_cmd, shell=True )
-	parse.wait()
+        parse = subprocess.check_call( work_info.parse_cmd, shell=True )
 
         no_good_hits = combine_outputs( blast_type, task, subject, regular_files, color_files, \
                                         nohit_files, options )
