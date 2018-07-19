@@ -3,7 +3,7 @@ Scripts to multiplex BLAST jobs on a server managed by slurm
 
 
 
-Usage: split_blast.py [options]
+Usage: master_blaster [options]
 
 ### Options:
 ```
