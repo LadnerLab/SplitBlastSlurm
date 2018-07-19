@@ -43,7 +43,10 @@ def parse_sub_blast(info):
     if info.color_out: col_out_parse = open(info.color_out, 'w')
 
     result_handle = open(info.xml)
-    blast_records = NCBIXML.parse(result_handle)
+    try:
+        blast_records = NCBIXML.parse(result_handle)
+    except ValueError:
+        print( "Could not open XML file" )
     
     for rec in blast_records:
         if len(rec.alignments) >0:                                                                      #I believe that this verifies that there is at least one reportable hit
