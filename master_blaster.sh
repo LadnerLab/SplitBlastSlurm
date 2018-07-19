@@ -240,7 +240,6 @@ done
 
 # Combine files after the last blast has been completed
 jobnumber="${jobnumber:0:${#jobnumber} -1}"
-echo --dependency=afterok:$jobnumber $combine_file -t $TEMP $KEEPOUT 
 sbatch --dependency=afterok:$jobnumber $combine_file -t $TEMP $KEEPOUT 
 
 
