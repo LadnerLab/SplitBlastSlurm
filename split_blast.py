@@ -252,7 +252,7 @@ def split_fasta( options ):
 def write_fasta( names, sequences, new_filename):
     ''' Writes a given number of names and sequences into a fasta
         file'''
-    file_out = open ( new_filename, 'w' )
+    file_out = open ( new_filename, 'a+' )
     for index in range( len( names ) ):
         file_out.write( ">%s\n%s\n" % ( names[ index ], sequences[ index ] ) )
     file_out.close()
