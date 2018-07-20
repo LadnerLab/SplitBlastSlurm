@@ -163,6 +163,14 @@ def split_blast( blast_type, task, options ):
         elif blast_type in [ 'blastx', 'blastp' ]:
             format_as_database( options, 'prot' )
             subject = options.ps
+        else:
+            print( ( "Invalid combination of blast type and subject database. "
+                     "Note that when using blastn, tblastx, or tblastn, you "
+                     " must use a nucleotide database, and when using "
+                     "blastx or blastp, you must use a protein database."
+                     "Program exiting with failure code 1."
+                   )
+            sys.exit( 1 )
 
         # Run and parse blast
         # Only blastn uses 'task' variable
