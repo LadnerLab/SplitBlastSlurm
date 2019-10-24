@@ -161,6 +161,8 @@ case $key in
 
     -h|--help)
     python $BLASTSCRIPT -h 
+    echo '--time the amount of time to give jobs submitted to slurm.'
+    echo '--mem the amount of memory to allocate for jobs submitted to slurm.'
     shift
     shift
     exit 1
