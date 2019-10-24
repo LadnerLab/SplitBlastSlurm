@@ -2,4 +2,11 @@
 
 # Stores the directory where the script was called from
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-sbatch "$DIR"/master_blaster.sh $@
+
+if [ "$1" = -h ] || [ "$1" = --help ]; then
+    "$DIR"/master_blaster.sh -h
+else
+    sbatch "$DIR"/master_blaster.sh $@
+fi
+
+
