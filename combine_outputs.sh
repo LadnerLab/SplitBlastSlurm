@@ -1,6 +1,6 @@
 #!/bin/bash
 #SBATCH --time=5:00
-#ABATCH --workdir=.
+#ABATCH --chdir=.
 
 
 temp_dir=$2

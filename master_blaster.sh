@@ -1,7 +1,7 @@
 #!/bin/bash
 #SBATCH --job-name=split_blast
 #SBATCH --time=1:00:00
-#SBATCH --workdir=.
+#SBATCH --chdir=.
 
 module load python
 module load anaconda
