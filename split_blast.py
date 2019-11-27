@@ -222,14 +222,16 @@ def format_as_database( options, db_type ):
         options index
     '''
     if db_type == 'prot':
-        extension = 'nsq'
-    else:
         extension = 'psq'
+        seq_type = options.ps
+    else:
+        extension = 'nsq'
+        seq_type = options.ns
 
     if not options.dontIndex:
         os.chdir( "../" )
-        if not os.path.isfile( '%s.%s' % ( options.ns, extension ) ):
-            cmd = "makeblastdb -in %s -dbtype %s" % ( options.ns, db_type )
+        if not os.path.isfile( '%s.%s' % ( seq_type, extension ) ):
+            cmd = "makeblastdb -in %s -dbtype %s" % ( seq_type, db_type )
             subprocess.call( cmd, shell = True )
         os.chdir( options.temp )
 
