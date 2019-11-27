@@ -208,7 +208,6 @@ fi
 # Get the number of files created by split_fastas
 num_files= ls "$working_dir/$TEMP" | wc -l
 output=0
-
 # Call split_blast on the rest of the files in the directory 
 # with the args passed in 
 jobnumber=""
@@ -218,6 +217,7 @@ for file in "$TEMP"/*
 do
     # Create a file to run the blast, save its jobnumber 
     echo '#!/bin/sh' >> "$file.sh"
+    echo 'unset SLURM_MEM_PER_CPU' >> "$file.sh"
     echo '#SBATCH --time='$time >> "$file.sh"
     echo '#SBATCH --mem='$mem >> "$file.sh"
     echo '#SBATCH --output=pyoutput' >> $file.sh
@@ -229,9 +229,9 @@ do
     # We don't want to recreate the database for each blast, so only do it on the first
     if [[ -z "$jobnumber" ]] ; then
         echo ${sub_args[@]}
-        echo srun $BLASTSCRIPT -q $file ${sub_args[@]} >> "$file.sh"
+        echo python $BLASTSCRIPT -q $file ${sub_args[@]} >> "$file.sh"
     else
-        echo srun $BLASTSCRIPT -q $file ${sub_args[@]} --dontIndex >> "$file.sh"
+        echo python $BLASTSCRIPT -q $file ${sub_args[@]} --dontIndex >> "$file.sh"
     fi
 
     output=$( sbatch "$file.sh" )
