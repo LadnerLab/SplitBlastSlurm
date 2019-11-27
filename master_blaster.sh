@@ -217,7 +217,6 @@ for file in "$TEMP"/*
 do
     # Create a file to run the blast, save its jobnumber 
     echo '#!/bin/sh' >> "$file.sh"
-    echo 'unset SLURM_MEM_PER_CPU' >> "$file.sh"
     echo '#SBATCH --time='$time >> "$file.sh"
     echo '#SBATCH --mem='$mem >> "$file.sh"
     echo '#SBATCH --output=pyoutput' >> $file.sh
