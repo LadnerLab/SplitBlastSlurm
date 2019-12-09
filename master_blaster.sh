@@ -24,7 +24,7 @@ args=()
 
 # make sure MASTER_BLASTER_PATH is defined
 # or non-empty
-if [[ ! -z "$MASTER_BLASTER_PATH" ]]; then
+if [[ -z "$MASTER_BLASTER_PATH" ]]; then
     echo MASTER_BLASTER_PATH must be defined, please refer to
     echo the 'install.sh' script.
 
