@@ -115,7 +115,10 @@ def set_path_to_absolute( relative_path ):
         within the fileSystem
     '''
     if relative_path:
-       return os.path.abspath( relative_path ) 
+        if not os.path.isabs( relative_path ):
+            return os.path.abspath( relative_path ) 
+        return relative_path
+   
 
 def multiple_queries( query_list ):
     '''
