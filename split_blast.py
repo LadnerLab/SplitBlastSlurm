@@ -421,7 +421,7 @@ def add_options( parser_object , default_values ):
                                      )
                             )
 
-    parser_object.add_option( '--keepOut', default = False, action = 'store_true', \
+    parser_object.add_option( '-k', '--keepOut', default = False, action = 'store_true', \
                               help = ( "Use this flag if you don't want "
                                        "to delete the non-parsed blast files "
                                        "automatically if format not XML]"
