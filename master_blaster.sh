@@ -67,8 +67,7 @@ case $key in
     WITHCOLOR="$2"
     shift # past value
     ;;
-
-    -n|--numProcs)
+-n|--numProcs)
     NUMPROCS="$2"
     sub_args+=("$1")
     sub_args+=("$2")
@@ -237,9 +236,10 @@ do
     # We don't want to recreate the database for each blast, so only do it on the first
     if [[ -z "$jobnumber" ]] ; then
         echo ${sub_args[@]}
-        echo python $BLASTSCRIPT -q $file ${sub_args[@]} >> "$file.sh"
+        echo python $MASTER_BLASTER_PATH/$BLASTSCRIPT -q $file ${sub_args[@]} >> "$file.sh"
     else
-        echo python $BLASTSCRIPT -q $file ${sub_args[@]} --dontIndex >> "$file.sh"
+        echo "#SBATCH --dependency=afterok:"$jobnumber >> "$file.sh"
+        echo python $MASTER_BLASTER_PATH/$BLASTSCRIPT -q $file ${sub_args[@]} --dontIndex >> "$file.sh"
     fi
 
     output=$( sbatch "$file.sh" )
@@ -250,6 +250,6 @@ done
 
 # Combine files after the last blast has been completed
 jobnumber="${jobnumber:0:${#jobnumber} -1}"
-sbatch --dependency=afterok:$jobnumber $combine_file -t $TEMP $KEEPOUT 
+sbatch --dependency=afterok:$jobnumber $MASTER_BLASTER_PATH/$combine_file -t $TEMP $KEEPOUT 
 
 
