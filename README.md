@@ -1,6 +1,13 @@
 # SplitBlastSlurm
 Scripts to multiplex BLAST jobs on a server managed by slurm
 
+### Setup
+To begin, move this repository with all of its contents into a desired folder. 
+This folder should be in your PATH.
+Then, run ```./install.sh```. This script sets ```MASTER_BLASTER_PATH``` in your 
+```~/.profile```. 
+Then, you should be able to invoke ```master_blaster``` from anywhere on your system.
+
 
 
 Usage: master_blaster [options]
