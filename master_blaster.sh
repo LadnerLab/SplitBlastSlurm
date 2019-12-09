@@ -218,7 +218,7 @@ num_files= ls "$working_dir/$TEMP" | wc -l
 output=0
 # Call split_blast on the rest of the files in the directory 
 # with the args passed in 
-jobnumber=""
+jobnumber=()
 sub_args=($(echo "${sub_args[@]}" |tr ' ' '\n' | uniq | tr '\n' ' '))
 shopt -s nullglob
 for file in "$TEMP"/*
@@ -229,28 +229,32 @@ do
     echo '#SBATCH --mem='$mem >> "$file.sh"
     echo '#SBATCH --output=pyoutput' >> $file.sh
 
-    echo module load python >> "$file.sh"
-    echo module load anaconda >> "$file.sh"
-    echo module load blast+/2.7.1 >> "$file.sh"
-
     # We don't want to recreate the database for each blast, so only do it on the first
     if [[ -z "$jobnumber" ]] ; then
         echo ${sub_args[@]}
+        echo module load python >> "$file.sh"
+        echo module load anaconda >> "$file.sh"
+        echo module load blast+/2.7.1 >> "$file.sh"
+
         echo python $MASTER_BLASTER_PATH/$BLASTSCRIPT -q $file ${sub_args[@]} >> "$file.sh"
     else
         # only depend on the first job, the one that created the db
-        echo "#SBATCH --dependency=afterok:"${jobnumber[0]} >> "$file.sh"
+        echo "#SBATCH --dependency=afterok"${jobnumber[0]} >> "$file.sh"
+        echo module load python >> "$file.sh"
+        echo module load anaconda >> "$file.sh"
+        echo module load blast+/2.7.1 >> "$file.sh"
+
         echo python $MASTER_BLASTER_PATH/$BLASTSCRIPT -q $file ${sub_args[@]} --dontIndex >> "$file.sh"
     fi
 
     output=$( sbatch "$file.sh" )
     echo $output
-    jobnumber+="$( echo $output | cut -d ' ' -f 4 )":
+    jobnumber+=(:"$( echo $output | cut -d ' ' -f 4 )")
 done
 
 
 # Combine files after the last blast has been completed
-jobnumber="${jobnumber:0:${#jobnumber} -1}"
-sbatch --dependency=afterok:$jobnumber $MASTER_BLASTER_PATH/$combine_file -t $TEMP $KEEPOUT 
+all_jobs=$(echo "${jobnumber[@]}" | tr -d '[:space:]')
+sbatch --dependency=afterok$all_jobs $MASTER_BLASTER_PATH/$combine_file -t $TEMP $KEEPOUT 
 
 
