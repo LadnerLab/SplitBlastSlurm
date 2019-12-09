@@ -238,7 +238,8 @@ do
         echo ${sub_args[@]}
         echo python $MASTER_BLASTER_PATH/$BLASTSCRIPT -q $file ${sub_args[@]} >> "$file.sh"
     else
-        echo "#SBATCH --dependency=afterok:"$jobnumber >> "$file.sh"
+        # only depend on the first job, the one that created the db
+        echo "#SBATCH --dependency=afterok:"${jobnumber[0]} >> "$file.sh"
         echo python $MASTER_BLASTER_PATH/$BLASTSCRIPT -q $file ${sub_args[@]} --dontIndex >> "$file.sh"
     fi
 
