@@ -52,8 +52,8 @@ def split_fasta(opts):
         write_fasta(sub_names, sub_seqs, new_filename)
     return sub_files
 
-def read_fasta_lists(file):
-    fin = open( "../" + file, 'r')
+def read_fasta_lists(in_file):
+    fin = open( in_file, 'r')
     count=0
     
     names=[]
