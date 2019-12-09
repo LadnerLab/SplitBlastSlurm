@@ -254,7 +254,9 @@ done
 
 
 # Combine files after the last blast has been completed
+query_no_path=$(echo "$QUERY" | rev | cut -d '/' -f 1 | rev | cut -d '.' -f 1 )
+echo "$query_no_path"
 all_jobs=$(echo "${jobnumber[@]}" | tr -d '[:space:]')
-sbatch --dependency=afterok$all_jobs $MASTER_BLASTER_PATH/$combine_file -t $TEMP $KEEPOUT 
+sbatch --dependency=afterok$all_jobs $MASTER_BLASTER_PATH/$combine_file -t $TEMP $KEEPOUT "$query_no_path"
 
 
